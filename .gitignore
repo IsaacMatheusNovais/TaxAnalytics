@@ -51,3 +51,8 @@ htmlcov/
 build/
 dist/
 *.egg-info/
+
+xmls/
+
+# Arquivo que não pertence ao projeto.
+zapp.yaml

@@ -154,5 +154,3 @@ https://www.linkedin.com/in/isaac-matheus-novais/
 
 GitHub:
 https://github.com/IsaacMatheusNovais
-
-![DER da TaxAnalytics](docs/der_TaxAnalytics.png)

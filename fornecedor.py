@@ -1,5 +1,5 @@
 from database import conectar
-from models import FornecedorCreate
+from models import FornecedorCreate, FornecedorUpdate
 from psycopg2.extras import RealDictCursor
 
 #função criar fornecedor
@@ -60,7 +60,7 @@ def listar_fornecedores():
             "type": type(error).__name__
         }
     
-#FUNÇÃO PARA BUSCAR FORNECEDOR PELO CNPJ
+#Função para buscar fornecedor pelo CNPJ
 def buscar_fornecedor_por_cnpj(cnpj: str):
     conexao = None
     try:
@@ -92,5 +92,48 @@ def buscar_fornecedor_por_cnpj(cnpj: str):
         return {
             "success": False,
             "message": f"Erro ao conectar ao banco de dados: {error}",
+            "type": type(error).__name__
+        }
+
+#função para atualizar fornecedor
+def atualizar_fornecedor(cnpj: str,fornecedor: FornecedorUpdate):
+    conexao = None
+    try:
+        with conectar() as conexao:
+            with conexao.cursor() as cursor:
+                cursor.execute(#função para fazer atualização do cadastro do fornecedr recendo nome fantasia e razão pelo body em Json e o cnpj pelo path/url.
+                    """UPDATE fornecedor SET razao_social = %s, nome_fantasia = %s WHERE cnpj = %s""",
+                    (fornecedor.razao_social, fornecedor.nome_fantasia, cnpj)
+                )
+
+                if cursor.rowcount == 0:#verifica se a atualização afetou alguma linha no banco.
+                        return {
+                            "success": False,
+                            "message": "Fornecedor não encontrado."#Se não, retorna erro.
+                        }
+                conexao.commit()#se sim, comita a transação.
+
+               
+                return {#confirmada a transação, retorna sucesso.
+                    "success": True,
+                    "message": "Fornecedor atualizado com sucesso",
+                    "data": {
+                        "cnpj": cnpj,
+                        "razao_social": fornecedor.razao_social,
+                        "nome_fantasia": fornecedor.nome_fantasia
+                    }
+                }
+            
+    except Exception as error:
+        if conexao is not None:
+            conexao.rollback()
+            return {#exception para tratar de erro caso a conexão com o banco seja estabelecida, mas ocorra algum erro durante a execução da query.
+                "success": False,
+                "message": f"Erro ao atualizar fornecedor: {error}",
+                "type": type(error).__name__
+            }
+        return {#exception para tratar de erro caso a conexão com o banco não seja estabelecida.
+            "success": False,
+            "message": "Erro ao conectar ao banco de dados",
             "type": type(error).__name__
         }
