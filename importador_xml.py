@@ -1,7 +1,7 @@
 from pathlib import Path
 import xml.etree.ElementTree as ET
 
-arquivo = Path("xmls/NFE-35250416797826000163550010000398631019270599.xml")
+arquivo = Path("xmls/NFE-35250416797826000163550010000398631019270599.xml") #nota Gledson
 
 def ler_xml(caminho_arquivo: Path):
     arvore = ET.parse(caminho_arquivo)
@@ -12,11 +12,13 @@ def ler_xml(caminho_arquivo: Path):
 
     fornecedor = extrair_fornecedor(raiz, ns)
     nota_fiscal = extrair_nota_fiscal(raiz, ns)
-    produtos = extrair_produtos(raiz, ns)
+    itens = extrair_produtos(raiz, ns)
 
-    print(fornecedor)
-    print(nota_fiscal)
-    print(produtos)
+    return {
+        "fornecedor": fornecedor,
+        "nota_fiscal": nota_fiscal,
+        "itens": itens
+    }
 
 def extrair_fornecedor(raiz, ns):
 
@@ -90,4 +92,5 @@ def extrair_produtos(raiz, ns):
         })
     return itens
 
-ler_xml(arquivo)
+# Ative esta linha para testar as funções acima e imprimir suas saidas.
+#ler_xml(arquivo)
