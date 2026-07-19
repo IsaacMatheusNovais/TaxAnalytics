@@ -17,7 +17,7 @@ class NotaFiscalCreate(BaseModel):
     numero: str
     serie: str
     data_emissao: datetime
-    valor_produtos: Decimal
+    valor_produtos: Decimal #Para lidar com valores o tipo de dado correto no pydantic é o Decimal
     valor_frete: Decimal
     valor_desconto: Decimal
     valor_total: Decimal
