@@ -58,7 +58,7 @@ def buscar_nota_fiscal(numero, serie, cnpj):
                 if nota_fiscal:
                     return{
                         "success": True,
-                        "nota_fiscal": nota_fiscal
+                        "nota_fiscal": nota_fiscal  
                     }
                 else:
                     return{

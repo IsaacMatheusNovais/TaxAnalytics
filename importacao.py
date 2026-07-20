@@ -1,8 +1,9 @@
 from pathlib import Path
-from models import FornecedorCreate, NotaFiscalCreate
+from models import FornecedorCreate, NotaFiscalCreate, ItemNotaCreate
 from importador_xml import ler_xml
 from fornecedor import buscar_fornecedor_por_cnpj, criar_fornecedor
 from nota_fiscal import buscar_nota_fiscal, criar_nota_fiscal
+from item_nota import criar_item_nota
 
 def importar_xml(caminho_arquivo: Path):
     dados = ler_xml(caminho_arquivo)
@@ -23,6 +24,9 @@ def importar_xml(caminho_arquivo: Path):
         if not fornecedor_criado["success"]:
             return fornecedor_criado
     
+    # Reutiliza o dado cnpj do dicionário fornecedor para o dicionário da nota fiscal já que em ler_xml a função extrair_nota não coleta o cnpj novamente uma vez que já foi feito por extrair_fornecedor.
+    nota_fiscal["cnpj"] = fornecedor["cnpj"]
+
     #verifica se a nota já existe
     nota_fiscal_existente = buscar_nota_fiscal(nota_fiscal["numero"], nota_fiscal["serie"], nota_fiscal["cnpj"])
 
@@ -44,14 +48,27 @@ def importar_xml(caminho_arquivo: Path):
         # Se o cadastro foi realizado com sucesso, recuperamos o id gerado pelo banco.
         id_nota = nota_fiscal_criada["id_nota"]
 
-        # Coloca o dicionário de itens retornado pela função ler_xml dentro da variável itens.
-        itens = dados["itens"]
+    # Coloca o dicionário de itens retornado pela função ler_xml dentro da variável itens.
+    itens = dados["itens"]
 
-        for item in itens:
-            item["id_nota"] = id_nota #Essa linha significa: "Crie (ou atualize) a chave id_nota do dicionário item com o valor da variável id_nota."
-            
+    for item in itens:
+        item["id_nota"] = id_nota # Para cada item na nota, este comando insere no índice 0 do dicionário de informações do item o id da nota fiscal a qual ele pertence.
+
+        novo_item = ItemNotaCreate(**item) #Transforma o dicionário em um objeto da classe ItemNotaCreate
+
+        novo_item_adicionado = criar_item_nota(novo_item) # Chama a função para criar um novo item apartir do objeto recebido
+        
+        if not novo_item_adicionado["success"]:# Verifica se o item foi devidamente criado
+            return novo_item_adicionado # Se não foi criado, retorna a mensagem de erro da função
+    return {
+    "success": True,
+    "message": "XML importado com sucesso.",
+    "id_nota": id_nota,
+    "total_itens": len(itens)
+}
 
         
 
 arquivo = Path("xmls/NFE-31250420381877000420550000000497831193965250.xml") #nota ta tetra
-importar_xml(arquivo)
+resultado = importar_xml(arquivo)
+print (resultado)
