@@ -66,9 +66,3 @@ def importar_xml(caminho_arquivo: Path):
     "id_nota": id_nota,
     "total_itens": len(itens)
 }
-
-        
-
-arquivo = Path("xmls/NFE-31250420381877000420550000000497831193965250.xml") #nota ta tetra
-resultado = importar_xml(arquivo)
-print (resultado)

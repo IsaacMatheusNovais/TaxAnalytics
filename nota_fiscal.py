@@ -51,7 +51,7 @@ def buscar_nota_fiscal(numero, serie, cnpj):
     try:
         with conectar() as conexao:
             with conexao.cursor(cursor_factory=RealDictCursor) as cursor:
-                cursor.execute("""SELECT numero, serie, cnpj
+                cursor.execute("""SELECT id_nota, numero, serie, cnpj
                                FROM nota_fiscal WHERE numero = %s AND
                                serie = %s AND cnpj = %s """, (numero, serie, cnpj,))
                 nota_fiscal = cursor.fetchone()

@@ -1,24 +1,23 @@
 from pathlib import Path
 import xml.etree.ElementTree as ET
 
-arquivo = Path("xmls/NFE-35250416797826000163550010000398631019270599.xml") #nota Gledson
-
 def ler_xml(caminho_arquivo: Path):
-    arvore = ET.parse(caminho_arquivo)
-    raiz = arvore.getroot()
+    with open(caminho_arquivo, "rb") as arquivo:
+        arvore = ET.parse(arquivo)
+        raiz = arvore.getroot()
 
-    # Namespace utilizado pelo XML da NF-e.
-    ns = {"nfe": "http://www.portalfiscal.inf.br/nfe"}
+        # Namespace utilizado pelo XML da NF-e.
+        ns = {"nfe": "http://www.portalfiscal.inf.br/nfe"}
 
-    fornecedor = extrair_fornecedor(raiz, ns)
-    nota_fiscal = extrair_nota_fiscal(raiz, ns)
-    itens = extrair_produtos(raiz, ns)
+        fornecedor = extrair_fornecedor(raiz, ns)
+        nota_fiscal = extrair_nota_fiscal(raiz, ns)
+        itens = extrair_produtos(raiz, ns)
 
-    return {
-        "fornecedor": fornecedor,
-        "nota_fiscal": nota_fiscal,
-        "itens": itens
-    }
+        return {
+            "fornecedor": fornecedor,
+            "nota_fiscal": nota_fiscal,
+            "itens": itens
+        }
 
 def extrair_fornecedor(raiz, ns):
 

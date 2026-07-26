@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, Field
 from datetime import datetime
 from decimal import Decimal
 
@@ -29,3 +29,22 @@ class ItemNotaCreate(BaseModel):
     unidade_medida: str
     valor_unitario: Decimal
     id_nota: int
+
+class UsuarioCreate(BaseModel):
+    nome: str
+    email: EmailStr
+    senha: str = Field(min_length=8) #Usa palavra reservada Field da bibiotec pydantic
+    id_nivel: str
+
+class UsuarioLogin(BaseModel):
+    usuario: str
+    senha: str = Field(min_length=8)
+
+class UsuarioUpdate(BaseModel):
+    nome: str
+    email: EmailStr
+    senha: str = Field(min_length=8)
+    ativo: bool
+
+class NivelAcessoCreate(BaseModel):
+    descricao: str
